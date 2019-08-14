@@ -10,7 +10,7 @@ backup_dir="$FILES"/tmp
 dest_dir_file="$FILES"/files/dest_dir
 manifest_file_from_deployment="$FILES"/files/manifest
 update_files_tar="$FILES"/files/update.tar
-
+permissions_file="$FILES"/files/permissions
 
 state_dir="/var/lib/mender/dir-overlay-install"
 manifest_file="$state_dir/manifest"
@@ -95,6 +95,10 @@ case "$STATE" in
 
         cp $manifest_file_prev $manifest_file
         tar -xf ${prev_files_tar} -C ${dest_dir}
+        if test -f $permissions_file
+        then
+            chmod $(cat $permissions_file) ${dest_dir}/
+        fi
         ;;
 esac
 

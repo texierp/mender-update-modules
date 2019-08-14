@@ -62,6 +62,7 @@ manifest_file="manifest"
 file_tree=""
 passthrough=0
 passthrough_args=""
+permissions_file="permissions"
 
 while (( "$#" )); do
   if test $passthrough -eq 1
@@ -156,6 +157,9 @@ fi
 
 find $file_tree -type f | sed "s|^$file_tree/||" > $manifest_file
 
+# Create permissions file in plain text
+stat -c %a "${file_tree}" > $permissions_file
+
 # Create dest_dir file in plain text
 echo "$dest_dir" > $dest_dir_file
 
@@ -167,11 +171,13 @@ mender-artifact write module-image \
   -f $update_files_tar \
   -f $dest_dir_file \
   -f $manifest_file \
+  -f $permissions_file \
   $passthrough_args
 
 rm $update_files_tar
 rm $dest_dir_file
 rm $manifest_file
+rm $permissions_file
 
 echo "Artifact $output_path generated successfully:"
 mender-artifact read $output_path
